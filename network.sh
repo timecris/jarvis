@@ -9,7 +9,8 @@ net_repeat_value=()
 
 function Connection_Check() 
 {
-	ret=($(ping $1 -w 3 | grep ttl))
+	#ret=("$(ping $1 -w 3 | grep ttl)")
+	ret=("$(l2ping -t 3 -c 3 $1 | grep time)")
 	if [ "$ret" = "" ] ; then
 		echo 0
 	else 
@@ -19,10 +20,10 @@ function Connection_Check()
 
 function loop_check()
 {
-	for (( i = 0; i < ${#USER_IP[@]}; i++ ))
+	for (( i = 0; i < ${#USER_MAC[@]}; i++ ))
 	do
-		before_state=($(cat $FILE_CONN | grep ${USER_IP[$i]} | awk -F "|" '{print $2}'))
-		cur_state=($(Connection_Check ${USER_IP[$i]}))
+		before_state=($(cat $FILE_CONN | grep ${USER_MAC[$i]} | awk -F "|" '{print $2}'))
+		cur_state=($(Connection_Check ${USER_MAC[$i]}))
 
 		if [ "$cur_state" == "$before_state" ]; then
 			net_repeat_cnt[$i]=0
@@ -35,17 +36,17 @@ function loop_check()
 			if [ ${net_repeat_value[$i]} == $cur_state ]; then
 				net_repeat_cnt[$i]=$((${net_repeat_cnt[$i]}+1))
 			fi
-			print_args "NETWORK" "Checking ${USER_IP[$i]} ($before_state->$cur_state) (${net_repeat_cnt[$i]}/$NETWORK_CHECK_TIMES) Times"
+			print_args "NETWORK" "Checking ${USER_MAC[$i]} ($before_state->$cur_state) (${net_repeat_cnt[$i]}/$NETWORK_CHECK_TIMES) Times"
 
 	                if [ ${net_repeat_cnt[$i]} == $NETWORK_CHECK_TIMES ]; then
 				net_repeat_cnt[$i]=0
-				print_args "NETWORK" "Changed ${USER_IP[$i]} state from $before_state to $cur_state"
-				cmd="sed -i -e 's/${USER_IP[$i]}|.*/${USER_IP[$i]}|$cur_state/g' $FILE_CONN"
+				print_args "NETWORK" "Changed ${USER_MAC[$i]} state from $before_state to $cur_state"
+				cmd="sed -i -e 's/${USER_MAC[$i]}|.*/${USER_MAC[$i]}|$cur_state/g' $FILE_CONN"
 				eval $cmd
 				if [ $cur_state == 1 ]; then
-					Talk_To_Jarvis "CONNECT" "${USER_IP[$i]}|$cur_state"
+					Talk_To_Jarvis "CONNECT" "${USER_MAC[$i]}|$cur_state"
 				else 
-					Talk_To_Jarvis "DISCONNECT" "${USER_IP[$i]}|$cur_state"
+					Talk_To_Jarvis "DISCONNECT" "${USER_MAC[$i]}|$cur_state"
 				fi
 			fi
 		fi
@@ -55,10 +56,10 @@ function loop_check()
 function init()
 {
 	truncate -s 0 $FILE_CONN
-        for (( i = 0; i < ${#USER_IP[@]}; i++ ))
+        for (( i = 0; i < ${#USER_MAC[@]}; i++ ))
         do
-                ret=($(Connection_Check ${USER_IP[$i]}))
-		echo "${USER_IP[$i]}|$ret" >> $FILE_CONN
+                ret=($(Connection_Check ${USER_MAC[$i]}))
+		echo "${USER_MAC[$i]}|$ret" >> $FILE_CONN
                 eval $cmd
 		net_repeat_cnt[$i]=0
 		net_repeat_value[$i]=0
