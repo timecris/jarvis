@@ -60,7 +60,6 @@ function init()
         do
                 ret=($(Connection_Check ${USER_MAC[$i]}))
 		echo "${USER_MAC[$i]}|$ret" >> $FILE_CONN
-                eval $cmd
 		net_repeat_cnt[$i]=0
 		net_repeat_value[$i]=0
         done

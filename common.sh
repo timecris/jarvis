@@ -20,12 +20,14 @@ function GetUserList()
 {
         USER_IP=($(cat $CONFIG_USER_INFO_FILE | awk -F "|" '{print $1}'))
         USER_NAME=($(cat $CONFIG_USER_INFO_FILE | awk -F "|" '{print $2}'))
+        USER_MAC=($(cat $CONFIG_USER_INFO_FILE | awk -F "|" '{print $3}'))
 
 #for debugging
 #        for (( i = 0; i < ${#USER_IP[@]}; i++ ))
 #        do
 #                echo ${USER_IP[$i]}
 #                echo ${USER_NAME[$i]}
+#                echo ${USER_MAC[$i]}
 #        done
 }
 
@@ -34,6 +36,16 @@ function GetUserName()
         for (( i = 0; i < ${#USER_IP[@]}; i++ ))
         do
                 if [ "$1" == "${USER_IP[$i]}" ]; then
+                        echo "${USER_NAME[$i]}"
+                fi
+        done
+}
+
+function GetUserNameByMAC()
+{
+        for (( i = 0; i < ${#USER_MAC[@]}; i++ ))
+        do
+                if [ "$1" == "${USER_MAC[$i]}" ]; then
                         echo "${USER_NAME[$i]}"
                 fi
         done
