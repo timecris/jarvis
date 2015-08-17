@@ -10,11 +10,27 @@ CONFIG_AUDIO_INFO_FILE="conf/audio.conf"
 
 USER_IP=()
 USER_NAME=()
-USER_STATE=()
+USER_MAC=()
+
+AUDIO_NAME=()
+AUDIO_MAC=()
 
 FILE_CONN=/tmp/connection
 FILE_CAPTURE=/tmp/capture
 INTERVAL=5
+
+function GetBtDevices()
+{
+	AUDIO_NAME=($(grep "pcm" ~/.asoundrc | awk -F "." '{print $2}' | awk -F " " '{print $1}'))
+	AUDIO_MAC=($(grep "device" ~/.asoundrc | awk -F " " '{print $2}'))
+
+#for debugging
+#        for (( i = 0; i < ${#AUDIO_MAC[@]}; i++ ))
+#        do
+#                echo ${AUDIO_NAME[$i]}
+#                echo ${AUDIO_MAC[$i]}
+#        done
+}
 
 function GetUserList()
 {
@@ -50,6 +66,17 @@ function GetUserNameByMAC()
                 fi
         done
 }
+
+function GetAudioMACByName()
+{
+        for (( i = 0; i < ${#AUDIO_MAC[@]}; i++ ))
+        do
+                if [ "$1" == "${AUDIO_NAME[$i]}" ]; then
+                        echo "${AUDIO_MAC[$i]}"
+                fi
+        done
+}
+
 
 function GetPid()
 {
@@ -94,4 +121,10 @@ function GetRandomString()
 	echo "$str"
 }
 
+function ShutUp()
+{
+	killall -9 mplayer 2&>1
+}
+
 GetUserList
+GetBtDevices

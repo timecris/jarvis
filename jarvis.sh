@@ -1,15 +1,65 @@
 #!/bin/bash
 source ./common.sh
 
+function Any_QST()
+{
+	Talk_To_Jjak "ANY_QST" "Hello+My+name+is+Jarvis+What+can+I+do+for+you?"
+}
+
+function Any_ANS()
+{
+	shopt -s nocasematch
+
+	echo "JARVIS-Any_ANS-$1"
+	if [[ "$1" =~ "music" ]]; then
+		echo "JARVIS-Music_ANS-$1-OK"
+		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
+		#mplayer -noconsolecontrols -ao alsa:device=btheadset -playlist /tmp/playlist.txt &
+		#mplayer -noconsolecontrols -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
+		mplayer -noconsolecontrols -playlist /tmp/playlist.txt &
+	elif [[ "$1" =~ "tv" ]]; then
+		irsend SEND_ONCE tv KEY_POWER
+		sleep 1
+		irsend SEND_ONCE soundbar KEY_POWER
+		sleep 1
+		irsend SEND_ONCE btv KEY_POWER
+		sleep 1
+	elif [[ "$1" =~ "soundbar" ]]; then
+		
+		a_mac=($(GetAudioMACByName "soundbar"))
+		echo A_MAC-$a_mac
+
+		irsend SEND_ONCE soundbar KEY_POWER
+		sleep 3
+		irsend SEND_ONCE soundbar KEY_3
+		sleep 3
+		irsend SEND_ONCE soundbar KEY_CONNECT
+		sleep 7
+		Talk_To_Jjak "TTS" "Now+is+preparing+to+connect"
+
+		bluez-simple-agent hci0 $a_mac
+		sleep 3
+		bluez-test-device trusted $a_mac
+		bluez-test-device trusted $a_mac yes
+		sleep 3
+		bluez-test-audio connect $a_mac
+
+		#should verify connection
+		#Fix me
+
+		Talk_To_Jjak "TTS" "connect+successfully"
+	fi
+}
+
 function Music_QST()
 {
-	Talk_To_Jjak "MUSIC_QST" "노래+들으실래요?"
+	Talk_To_Jjak "MUSIC_QST" "Do+you+want+to+listen+music?"
 }
 
 function Music_ANS()
 {
 	echo "JARVIS-Music_ANS-$1"
-	if [ "$1" == "응들려줘" -o "$1" == "응알려줘" ]; then
+	if [ "$1" == "yes" ]; then
 		echo "JARVIS-Music_ANS-$1-OK"
 		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
 		#mplayer -noconsolecontrols -ao alsa:device=btheadset -playlist /tmp/playlist.txt &
@@ -20,13 +70,13 @@ function Music_ANS()
 
 function Tv_QST()
 {
-	Talk_To_Jjak "TV_QST" "티비+보실래요?"
+	Talk_To_Jjak "TV_QST" "Do+you+want+to+watch+TV?"
 }
 
 function Tv_ANS()
 {
 	echo "JARVIS-Tv_ANS-$1"
-	if [ "$1" == "응들려줘" -o "$1" == "응알려줘" -o "$1" == "응보여줘" -o "$1" == "보여줘" ]; then
+	if [ "$1" == "yes" ]; then
 		echo "JARVIS-Tv_ANS-$1-OK"
 		sleep 3
 		irsend SEND_ONCE tv KEY_POWER
@@ -44,7 +94,7 @@ function Connect()
 {
 	ipaddr=($(echo $1 | awk -F "|" '{print $1}'))
 	#NAME=($(GetUserName $ipaddr))
-	Talk_To_Jjak "TTS" "고생많으셨습니다"
+	Talk_To_Jjak "TTS" "Hello+My+name+is+Jarvis."
 	sleep 5
 	Music_QST
 }
@@ -53,7 +103,7 @@ function Disconnect()
 {
 	ipaddr=($(echo $1 | awk -F "|" '{print $1}'))
 	#NAME=($(GetUserName $ipaddr))
-	Talk_To_Jjak "TTS" "안녕히+가세요+이건테스트에요"
+	Talk_To_Jjak "TTS" "have+a+good+day+bye+bye"
 }
 
 function Person()
@@ -96,6 +146,12 @@ function Handler()
 		;;
 	PERSON)
 		Person "$PAYLOAD"
+		;;
+	BTN_CLICK)
+		Any_QST "$PAYLOAD"
+		;;
+	ANY_ANS)
+		Any_ANS "$PAYLOAD"
 		;;
 	esac
 }

@@ -2,13 +2,16 @@
 source ./common.sh
 
 BUTTON_INTERVAL=1
+BUTTON_SLEEP=10
 BUTTON_GPIO=26
 
 function loop_check()
 {
 	v=$(cat /sys/class/gpio/gpio$BUTTON_GPIO/value)
 	if [ $v == 0 ]; then
-		#TalkToJarvis "BUTTON_CLICK" "CLICK"
+		ShutUp
+		Talk_To_Jarvis "BTN_CLICK" "1"
+		sleep $BUTTON_SLEEP
 	fi
 }
 

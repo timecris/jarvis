@@ -11,7 +11,7 @@ function SpeechToText()
 	arecord -D plughw:1,0 -f cd -t wav -d 5 -r 16000 /tmp/out.wav 
 	flac -f --best --sample-rate 16000 -o /tmp/out.flac /tmp/out.wav
 	
-	ret=("$(wget -O - -o /dev/null --post-file /tmp/out.flac --header="Content-Type: audio/x-flac; rate=16000" "http://www.google.com/speech-api/v2/recognize?lang=ko-kr&key=AIzaSyAe7fGX5otBNDK1krub_WvOj3Of7AFxJ4I&output=json")")
+	ret=("$(wget -O - -o /dev/null --post-file /tmp/out.flac --header="Content-Type: audio/x-flac; rate=16000" "http://www.google.com/speech-api/v2/recognize?lang=en-US&key=AIzaSyAe7fGX5otBNDK1krub_WvOj3Of7AFxJ4I&output=json")")
 	text=("$(echo "$ret" | cut -f8 -d\")")
 	echo "$text"
 }
@@ -30,11 +30,11 @@ function TextToSpeech()
 	if [ "$file" == "" ]; then
 		getNewGoogleCookie
 		#wget -q -U Mozilla -O out.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=ko&q=$STRING"
-		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=ko&q=$STRING"
-		mplayer /tmp/out.mp3 -channels 6 -af resample=48000,hrtf
+		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING"
 		ranstr=($(GetRandomString))
 		cp /tmp/out.mp3 sound/$ranstr.mp3
 		echo "$ranstr.mp3|$STRING" >> conf/sound.conf
+		mplayer sound/$ranstr.mp3 -channels 6 -af resample=48000,hrtf
 	else
 		mplayer sound/$file -channels 6 -af resample=48000,hrtf
 	fi
@@ -70,6 +70,14 @@ function Handler()
 		text=("$(echo "$ret" | tr -d '\040\011\012\015')")
 		echo "TV_QST-$text"
 		Talk_To_Jarvis "TV_ANS" "$text"
+		;;
+	ANY_QST)
+		TextToSpeech "$PAYLOAD"
+		ret=("$(SpeechToText)")
+		echo "ANY_QST-$ret"
+		text=("$(echo "$ret" | tr -d '\040\011\012\015')")
+		echo "ANY_QST-$text"
+		Talk_To_Jarvis "ANY_ANS" "$text"
 		;;
 	esac
 }

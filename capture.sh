@@ -4,7 +4,7 @@ source ./common.sh
 CAPTURE_DEVICE=/dev/video0
 CAPTURE_IMAGE=/tmp/in.jpg
 CAPTURE_SIZE="640x480"
-CAPTURE_INTERVAL=3
+CAPTURE_INTERVAL=10
 CAPTURE_CHECK_TIMES=5
 
 capture_repeat_cnt=0
