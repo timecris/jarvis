@@ -3,7 +3,7 @@ source ./common.sh
 
 function Any_QST()
 {
-	Talk_To_Jjak "ANY_QST" "Hello+My+name+is+Jarvis+What+can+I+do+for+you?"
+	Talk_To_Jjak "ANY_QST" "What+can+I+do+for+you?"
 }
 
 function Any_ANS()
@@ -11,12 +11,18 @@ function Any_ANS()
 	shopt -s nocasematch
 
 	echo "JARVIS-Any_ANS-$1"
-	if [[ "$1" =~ "music" ]]; then
-		echo "JARVIS-Music_ANS-$1-OK"
+	if [[ "$1" =~ "music" && "$1" =~ "speaker" ]]; then
 		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
-		#mplayer -noconsolecontrols -ao alsa:device=btheadset -playlist /tmp/playlist.txt &
-		#mplayer -noconsolecontrols -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
-		mplayer -noconsolecontrols -playlist /tmp/playlist.txt &
+		mplayer -noconsolecontrols -shuffle -ao alsa:device=speaker -playlist /tmp/playlist.txt &
+	elif [[ "$1" =~ "music" && "$1" =~ "soundbar" ]]; then
+		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
+		mplayer -noconsolecontrols -shuffle -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
+	elif [[ "$1" =~ "classic" && "$1" =~ "speaker" ]]; then
+		find /root/classic/classic_1 -name "*.mp3" -print | sort -n > /tmp/playlist.txt
+		mplayer -noconsolecontrols -shuffle -ao alsa:device=speaker -playlist /tmp/playlist.txt &
+	elif [[ "$1" =~ "classic" && "$1" =~ "soundbar" ]]; then
+		find /root/classic/classic_1 -name "*.mp3" -print | sort -n > /tmp/playlist.txt
+		mplayer -noconsolecontrols -shuffle -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
 	elif [[ "$1" =~ "tv" ]]; then
 		irsend SEND_ONCE tv KEY_POWER
 		sleep 1
@@ -24,8 +30,7 @@ function Any_ANS()
 		sleep 1
 		irsend SEND_ONCE btv KEY_POWER
 		sleep 1
-	elif [[ "$1" =~ "soundbar" ]]; then
-		
+	elif [[ "$1" =~ "connect" && "$1" =~ "soundbar" ]]; then
 		a_mac=($(GetAudioMACByName "soundbar"))
 		echo A_MAC-$a_mac
 
@@ -48,6 +53,17 @@ function Any_ANS()
 		#Fix me
 
 		Talk_To_Jjak "TTS" "connect+successfully"
+	elif [[ "$1" =~ "take" && "$1" =~ "picture" ]]; then
+		fswebcam -p YUYV -d /dev/video0 -r 640x480 ./picture/picture.jpg > /dev/null 2>&1
+	elif [[ "$1" =~ "turnon" && "$1" =~ "fan" ]]; then
+		irsend SEND_ONCE fan KEY_POWER
+	elif [[ "$1" =~ "turnoff" && "$1" =~ "fan" ]]; then
+		irsend SEND_ONCE fan KEY_POWER2
+	elif [[ "$1" =~ "spin" && "$1" =~ "fan" ]]; then
+		irsend SEND_ONCE fan KEY_POWER
+	else
+		Talk_To_Jjak "TTS" "I+Can't+understand.+Please+repeat+again"
+		print_args "JARVIS" "Wrong command. You said ($1)"    
 	fi
 }
 
@@ -64,7 +80,7 @@ function Music_ANS()
 		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
 		#mplayer -noconsolecontrols -ao alsa:device=btheadset -playlist /tmp/playlist.txt &
 		#mplayer -noconsolecontrols -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
-		mplayer -noconsolecontrols -playlist /tmp/playlist.txt &
+		mplayer -noconsolecontrols -shuffle -ao alsa:device=speaker -playlist /tmp/playlist.txt &
 	fi
 }
 
@@ -109,7 +125,6 @@ function Disconnect()
 function Person()
 {
 	if [ $1 == 0 ]; then
-		Talk_To_Jjak "TTS" "자러+가는+거에요?+안녕히+주무세요+티비는+제가+끌께요"
 		sleep 3
                 irsend SEND_ONCE tv KEY_POWER
 		sleep 1

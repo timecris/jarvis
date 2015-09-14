@@ -8,7 +8,7 @@ function getNewGoogleCookie()
 
 function SpeechToText()
 {
-	arecord -D plughw:1,0 -f cd -t wav -d 5 -r 16000 /tmp/out.wav 
+	arecord -D plughw:0,0 -f cd -t wav -d 5 -r 16000 /tmp/out.wav 
 	flac -f --best --sample-rate 16000 -o /tmp/out.flac /tmp/out.wav
 	
 	ret=("$(wget -O - -o /dev/null --post-file /tmp/out.flac --header="Content-Type: audio/x-flac; rate=16000" "http://www.google.com/speech-api/v2/recognize?lang=en-US&key=AIzaSyAe7fGX5otBNDK1krub_WvOj3Of7AFxJ4I&output=json")")
@@ -34,9 +34,9 @@ function TextToSpeech()
 		ranstr=($(GetRandomString))
 		cp /tmp/out.mp3 sound/$ranstr.mp3
 		echo "$ranstr.mp3|$STRING" >> conf/sound.conf
-		mplayer sound/$ranstr.mp3 -channels 6 -af resample=48000,hrtf
+		mplayer -ao alsa:device=speaker sound/$ranstr.mp3 -channels 6 -af resample=48000,hrtf
 	else
-		mplayer sound/$file -channels 6 -af resample=48000,hrtf
+		mplayer -ao alsa:device=speaker sound/$file -channels 6 -af resample=48000,hrtf
 	fi
 
 	#mplayer -ao alsa:device=soundbar /tmp/out.mp3 -channels 6 -af resample=48000,hrtf
@@ -81,6 +81,9 @@ function Handler()
 		;;
 	esac
 }
+
+SetRecordMixer
+SetPlaybackMixer
 
 if [[ ! -p $IPC_JJAK ]]; then
     mkfifo $IPC_JJAK

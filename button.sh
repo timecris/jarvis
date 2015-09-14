@@ -3,7 +3,7 @@ source ./common.sh
 
 BUTTON_INTERVAL=1
 BUTTON_SLEEP=10
-BUTTON_GPIO=26
+BUTTON_GPIO=6
 
 function loop_check()
 {
