@@ -3,7 +3,7 @@ source ./common.sh
 
 function Handler()
 {
-        echo "HANDLE-$1"
+        print_args "IR" "Handler dispatched - "$1""
 	IR_HEX=($(echo "$1" | awk -F " " '{print $1}'))
 	IR_CMD=($(echo "$1" | awk -F " " '{print $3}'))
 	IR_DEV=($(echo "$1" | awk -F " " '{print $4}'))
@@ -25,7 +25,7 @@ function init()
 {
 	pid=($(GetPid irw))
 	if [[ "$pid" == "" ]]; then
-		echo "Starting irw process"
+		print_args "IR" "Starting irw process"
 		irw > $IPC_IR &
 	fi
 }
@@ -33,6 +33,7 @@ function init()
 init
 
 if [[ ! -p $IPC_IR ]]; then
+    rm $IPC_IR
     mkfifo $IPC_IR
 fi
 
@@ -43,8 +44,9 @@ do
             break
         fi
         Handler "$line"
+	cat $IPC_IR > /dev/null
     fi
 done
 
-echo "IR exiting"
+print_args "IR exiting"
 

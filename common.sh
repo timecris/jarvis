@@ -92,8 +92,9 @@ function Talk_To_Jjak()
 		if [[ "$pid" -ne "" ]]; then
         		echo "PACKET-$1@$2"
 		        echo "$1@$2" > $IPC_JJAK
+        		print_args "COMMON" "Send message($1@$2) to JJAK($IPC_JJAK, $pid)"
 		else
-        		echo "JJAK process not found"
+        		print_args "COMMON" "JJAK process not found"
 		fi
 	fi
 }
@@ -105,8 +106,9 @@ function Talk_To_Jarvis()
 		if [[ "$pid" -ne "" ]]; then
 	        	echo "$1@$2"
 	        	echo "$1@$2" > $IPC_JARVIS
+        		print_args "COMMON" "Send message($1@$2) to Jarvis($IPC_JARVIS, $pid)"
 		else 
-        		echo "JARVIS process not found"
+        		print_args "COMMON" "JARVIS process not found"
 		fi
 	fi
 }
@@ -177,6 +179,28 @@ function SetRecordMixer()
 	amixer $1 -Dhw:sndrpiwsp cset name='AIF1TX2 Input 1' LHPF2
 	amixer $1 -Dhw:sndrpiwsp cset name='AIF1TX2 Input 1 Volume' 32
 	amixer $1 -Dhw:sndrpiwsp cset name='AIF1TX2 Input 1 Volume' 100
+}
+
+function SoundbarReadyToPair()
+{
+	irsend SEND_ONCE soundbar KEY_POWER
+	sleep 3
+	irsend SEND_ONCE soundbar KEY_3
+	sleep 3
+	irsend SEND_ONCE soundbar KEY_CONNECT
+	sleep 7
+	Talk_To_Jjak "TTS" "Now+is+preparing+to+connect"
+}
+
+function ConnectToSoundbar()
+{
+	bluez-simple-agent hci0 $1
+	sleep 3
+	bluez-test-device trusted $1
+	bluez-test-device trusted $1 yes
+	sleep 3
+	bluez-test-audio connect $1
+	Talk_To_Jjak "TTS" "connect+successfully"
 }
 
 GetUserList

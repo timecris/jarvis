@@ -86,6 +86,7 @@ SetRecordMixer
 SetPlaybackMixer
 
 if [[ ! -p $IPC_JJAK ]]; then
+    rm $IPC_JJAK
     mkfifo $IPC_JJAK
 fi
 
@@ -96,6 +97,7 @@ do
 	fi
 	echo $line
 	Handler "$line"
+	cat $IPC_JJAK > /dev/null
 done
 
 echo "Jjak exiting"
