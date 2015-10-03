@@ -18,6 +18,7 @@ AUDIO_MAC=()
 
 FILE_CONN=/tmp/connection
 FILE_CAPTURE=/tmp/capture
+FILE_STATE=/tmp/state
 INTERVAL=5
 
 function GetBtDevices()
@@ -201,6 +202,30 @@ function ConnectToSoundbar()
 	sleep 3
 	bluez-test-audio connect $1
 	Talk_To_Jjak "TTS" "connect+successfully"
+}
+
+function SetReady()
+{
+	cmd="sed -i -e 's/$1|.*/$1|1/g' $FILE_STATE"
+	eval $cmd
+	print_args "COMMON" "Set Ready $1"
+}
+
+function SetBlock()
+{
+	cmd="sed -i -e 's/$1|.*/$1|0/g' $FILE_STATE"
+	eval $cmd
+	print_args "COMMON" "Set Stop $1"
+}
+
+function CheckReady()
+{
+	state=($(cat $FILE_STATE | grep STATE | awk -F "|" '{print $2}'))	
+	print_args "COMMON" "STATE-$state"
+	if [[ "$state" == "1" ]]; then
+		echo "ready"
+		print_args "COMMON" "All process are ready to run"
+	fi
 }
 
 GetUserList

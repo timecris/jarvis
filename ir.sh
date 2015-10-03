@@ -43,10 +43,14 @@ do
         if [[ "$line" == 'quit' ]]; then
             break
         fi
-        Handler "$line"
-	cat $IPC_IR > /dev/null
+	
+        checkret=($(CheckReady))
+        if [[ "$checkret" == 'ready' ]]; then
+                SetBlock "STATE"
+                Handler "$line"
+        fi
     fi
 done
 
+rm $IPC_IR
 print_args "IR exiting"
-

@@ -50,6 +50,7 @@ function Any_ANS()
 		Talk_To_Jjak "TTS" "I+Can't+understand.+Please+repeat+again"
 		print_args "JARVIS" "Wrong command. You said ($1)"    
 	fi
+    	SetReady "STATE"
 }
 
 function Music_QST()
@@ -136,6 +137,14 @@ function Handler()
 	esac
 }
 
+function init()
+{
+	#set ready to run
+	echo "STATE|1" > $FILE_STATE
+}
+
+init
+
 if [[ ! -p $IPC_JARVIS ]]; then
     rm $IPC_JARVIS
     mkfifo $IPC_JARVIS
@@ -147,9 +156,10 @@ do
         if [[ "$line" == 'quit' ]]; then
             break
         fi	
-	Handler $line
-	cat $IPC_JARVIS > /dev/null
+	
+        Handler "$line"
     fi
 done
 
+rm $IPC_JARVIS
 print_args "Jarvis exiting"

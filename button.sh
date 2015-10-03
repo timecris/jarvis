@@ -9,9 +9,14 @@ function loop_check()
 {
 	v=$(cat /sys/class/gpio/gpio$BUTTON_GPIO/value)
 	if [ $v == 0 ]; then
-		ShutUp
-		Talk_To_Jarvis "BTN_CLICK" "1"
-		sleep $BUTTON_SLEEP
+        	checkret=($(CheckReady))
+        	if [[ "$checkret" == 'ready' ]]; then
+                	SetBlock "STATE"
+
+			ShutUp
+			Talk_To_Jarvis "BTN_CLICK" "1"
+			sleep $BUTTON_SLEEP
+        	fi
 	fi
 }
 

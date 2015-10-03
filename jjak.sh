@@ -24,6 +24,7 @@ function checkCache()
 
 function TextToSpeech()
 {
+	echo "TextToSpeech"
 	STRING="$1"
 	file=("$(checkCache "$STRING")")
 	echo $file
@@ -90,14 +91,16 @@ if [[ ! -p $IPC_JJAK ]]; then
     mkfifo $IPC_JJAK
 fi
 
-while read line < "$IPC_JJAK"
+while true
 do
-	if [[ "$line" == 'quit' ]]; then
-		break
-	fi
-	echo $line
-	Handler "$line"
-	cat $IPC_JJAK > /dev/null
+    if read line < "$IPC_JJAK"; then
+        if [[ "$line" == 'quit' ]]; then
+            break
+        fi
+
+        Handler "$line"
+    fi
 done
 
+rm $IPC_JJAK
 echo "Jjak exiting"
