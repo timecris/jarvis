@@ -30,8 +30,8 @@ function TextToSpeech()
 	echo $file
 	if [ "$file" == "" ]; then
 		getNewGoogleCookie
-		#wget -q -U Mozilla -O out.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=ko&q=$STRING"
-		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING"
+		#curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING"
+		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING&client=t"
 		ranstr=($(GetRandomString))
 		cp /tmp/out.mp3 sound/$ranstr.mp3
 		echo "$ranstr.mp3|$STRING" >> conf/sound.conf
