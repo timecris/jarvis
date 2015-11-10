@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./common.sh
 
-function Handler()
+function Handler_IR()
 {
         print_args "IR" "Handler dispatched - "$1""
 	IR_HEX=($(echo "$1" | awk -F " " '{print $1}'))
@@ -9,28 +9,26 @@ function Handler()
 	IR_DEV=($(echo "$1" | awk -F " " '{print $4}'))
 
         case $IR_CMD in
-	KEY_1)
+	KEY_X)
 		if [ "$IR_DEV" == "rpi" ]; then
 			ShutUp
+                	SetBlock "STATE"
 			Talk_To_Jarvis "BTN_CLICK" "1"
 		fi	
 		;;
+	KEY_Y)
+		if [ "$IR_DEV" == "rpi" ]; then
+			ShutUp
+                	SetBlock "STATE"
+			Talk_To_Jarvis "BTN_CLICK" "2"
+		fi	
+		;;
+
         KEY_POWER)
                 echo "Power Manager"
                 ;;
         esac
 }
-
-function init()
-{
-	pid=($(GetPid irw))
-	if [[ "$pid" == "" ]]; then
-		print_args "IR" "Starting irw process"
-		irw > $IPC_IR &
-	fi
-}
-
-init
 
 if [[ ! -p $IPC_IR ]]; then
     rm $IPC_IR
@@ -43,14 +41,12 @@ do
         if [[ "$line" == 'quit' ]]; then
             break
         fi
-	
+
         checkret=($(CheckReady))
         if [[ "$checkret" == 'ready' ]]; then
-                SetBlock "STATE"
-                Handler "$line"
+                Handler_IR "$line"
         fi
     fi
 done
 
-rm $IPC_IR
 print_args "IR exiting"

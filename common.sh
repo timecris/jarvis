@@ -1,6 +1,6 @@
 IPC_JARVIS=/tmp/jarvis
 IPC_JJAK=/tmp/jjak
-IPC_IR=/tmp/ir
+IPC_IR=/root/ir
 
 PRC_JARVIS=jarvis.sh
 PRC_JJAK=jjak.sh
@@ -20,6 +20,9 @@ FILE_CONN=/tmp/connection
 FILE_CAPTURE=/tmp/capture
 FILE_STATE=/tmp/state
 INTERVAL=5
+
+#OpenWeatherMap Key
+OWM_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 function GetBtDevices()
 {
@@ -91,9 +94,8 @@ function Talk_To_Jjak()
 	if [[ -p $IPC_JARVIS ]]; then
 		pid=($(GetPid $PRC_JJAK))
 		if [[ "$pid" -ne "" ]]; then
-        		echo "PACKET-$1@$2"
-		        echo "$1@$2" > $IPC_JJAK
-        		print_args "COMMON" "Send message($1@$2) to JJAK($IPC_JJAK, $pid)"
+			echo "$1@$2" > $IPC_JJAK
+			print_args "COMMON" "Send message($1@$2) to JJAK($IPC_JJAK, $pid)"
 		else
         		print_args "COMMON" "JJAK process not found"
 		fi
@@ -105,9 +107,8 @@ function Talk_To_Jarvis()
 	if [[ -p $IPC_JARVIS ]]; then
 		pid=($(GetPid $PRC_JARVIS))
 		if [[ "$pid" -ne "" ]]; then
-	        	echo "$1@$2"
-	        	echo "$1@$2" > $IPC_JARVIS
-        		print_args "COMMON" "Send message($1@$2) to Jarvis($IPC_JARVIS, $pid)"
+			echo "$1@$2" > $IPC_JARVIS
+			print_args "COMMON" "Send message($1@$2) to Jarvis($IPC_JARVIS, $pid)"
 		else 
         		print_args "COMMON" "JARVIS process not found"
 		fi
@@ -128,6 +129,7 @@ function GetRandomString()
 function ShutUp()
 {
 	killall -9 mplayer 2&>1
+	killall -9 mpg123 2&>1
 }
 
 function SetPlaybackMixer()

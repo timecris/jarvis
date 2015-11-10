@@ -30,27 +30,28 @@ function TextToSpeech()
 	echo $file
 	if [ "$file" == "" ]; then
 		getNewGoogleCookie
-		#curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING"
 		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING&client=t"
-		ranstr=($(GetRandomString))
-		cp /tmp/out.mp3 sound/$ranstr.mp3
-		echo "$ranstr.mp3|$STRING" >> conf/sound.conf
-		mplayer -ao alsa:device=speaker sound/$ranstr.mp3 -channels 6 -af resample=48000,hrtf
-	else
-		mplayer -ao alsa:device=speaker sound/$file -channels 6 -af resample=48000,hrtf
-	fi
 
-	#mplayer -ao alsa:device=soundbar /tmp/out.mp3 -channels 6 -af resample=48000,hrtf
-	#mplayer -ao alsa:device=btheadset /tmp/out.mp3 -channels 6 -af resample=48000,hrtf
+		#If permitted API call count is exceed, google returns string below.
+		#"Our systems have detected unusual traffic from your computer network. Please try your request again later"
+		grepstr="$(grep "Please" /tmp/out.mp3)"
+                if [[ "$grepstr" != "" ]]; then
+			print_args "JJAK" "Google API is not working."
+		else 
+			ranstr=($(GetRandomString))
+			/usr/bin/lame -V5 --vbr-new --resample 48 /tmp/out.mp3 sound/$ranstr.mp3
+			echo "$ranstr.mp3|$STRING" >> conf/sound.conf
+			mpg123 sound/$ranstr.mp3
+		fi
+	else
+		mpg123 sound/$file
+	fi
 }
 
 function Handler()
 {
-	#echo "JJAK-HANDLE-$1"
 	CMD=("$(echo "$1" | awk -F "@" '{print $1}')")
 	PAYLOAD=("$(echo "$1" | awk -F "@" '{print $2}')")
-	#echo "JJAK-CMD-"$CMD
-	#echo "JJAK-PAYLOAD-$PAYLOAD"
 
 	case "$CMD" in
 	TTS)
