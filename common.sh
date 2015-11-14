@@ -4,6 +4,7 @@ IPC_IR=/root/ir
 
 PRC_JARVIS=jarvis.sh
 PRC_JJAK=jjak.sh
+PRC_MPG=mpg123
 PRC_NETWORK=network.sh
 
 CONFIG_USER_INFO_FILE="conf/user.conf"
@@ -112,6 +113,16 @@ function Talk_To_Jarvis()
 		else 
         		print_args "COMMON" "JARVIS process not found"
 		fi
+	fi
+}
+
+function ProcessCheck()
+{
+	pid=($(GetPid $PRC_MPG))
+	print_args "COMMON" "$PRC_MPG process is $pid"
+	if [[ "$pid" -ne "" ]]; then
+		print_args "COMMON" "$PRC_MPG process has hanged. Kill the $PRC_MPG process"
+		ShutUp
 	fi
 }
 

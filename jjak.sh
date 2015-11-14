@@ -28,6 +28,7 @@ function TextToSpeech()
 	STRING="$1"
 	file=("$(checkCache "$STRING")")
 	echo $file
+	ProcessCheck
 	if [ "$file" == "" ]; then
 		getNewGoogleCookie
 		curl -b conf/cookie -o /tmp/out.mp3 -L --location-trusted -H "$(cat conf/google_tts)" "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=$STRING&client=t"
