@@ -26,13 +26,13 @@ function Any_ANS()
 	print_args "JARVIS" "Any_ANS - $1"
 	if [[ "$1" =~ "music" && "$1" =~ "speaker" ]]; then
 		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
-		mpg123 --list /tmp/playlist.txt --shuffle &
+		mpg123 -a speaker --list /tmp/playlist.txt --shuffle &
 	elif [[ "$1" =~ "music" && "$1" =~ "soundbar" ]]; then
 		SoundbarReadyToPair
 		ConnectToSoundbar $a_mac
 		find /root/music -name "*.mp3" -print | sort -n > /tmp/playlist.txt
 		#mplayer -noconsolecontrols -shuffle -ao alsa:device=soundbar -playlist /tmp/playlist.txt &
-		mpg123 --list /tmp/playlist.txt --shuffle &
+		mpg123 -a speaker --list /tmp/playlist.txt --shuffle &
 	elif [[ "$1" =~ "classic" && "$1" =~ "speaker" ]]; then
                 find /mnt/data/music/classic_2 -name "*.mp3" -print | sort -n > /tmp/playlist.txt
 		#mplayer -noconsolecontrols -shuffle -ao alsa:device=speaker -playlist /tmp/playlist.txt &

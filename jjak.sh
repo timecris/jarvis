@@ -42,10 +42,10 @@ function TextToSpeech()
 			ranstr=($(GetRandomString))
 			/usr/bin/lame -V5 --vbr-new --resample 48 /tmp/out.mp3 sound/$ranstr.mp3
 			echo "$ranstr.mp3|$STRING" >> conf/sound.conf
-			mpg123 sound/$ranstr.mp3
+			mpg123 -a speaker sound/$ranstr.mp3
 		fi
 	else
-		mpg123 sound/$file
+		mpg123 -a speaker sound/$file
 	fi
 }
 
@@ -89,7 +89,6 @@ SetRecordMixer
 SetPlaybackMixer
 
 if [[ ! -p $IPC_JJAK ]]; then
-    rm $IPC_JJAK
     mkfifo $IPC_JJAK
 fi
 
