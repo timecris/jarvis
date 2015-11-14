@@ -1,10 +1,9 @@
 # Jarvis
 ### Hardware
-- Raspberry PI 2 
+- [Raspberry PI 2](http://kr.element14.com/raspberry-pi/rpi2-modb-8gb-noobs/raspberry-pi-2-model-b-8gb-noobs/dp/2461032)
 - [Cirrus Logic Audio Card](http://www.element14.com/community/community/raspberry-pi/raspberry-pi-accessories/cirrus_logic_audio_card)
 - Bluetooth Speaker (Music)
 - Wired Speaker (Command)
-
 
 ### Prerequite
 - apt-get update
@@ -12,7 +11,7 @@
 - apt-get install lirc liblircclient-dev
 - apt-get install flac lame
 
-### How to test for playing mp3
+### How to test for playing mp3 through the Cirrus Logic Audio Card
 
 ```sh
 $ ./use_case_scripts/Playback_to_Lineout.sh 
@@ -49,7 +48,5 @@ MODULES="lirc_rpi"
 service jarvis start
 ```
 
-Bluetooth
-http://blog.whatgeek.com.pt/2014/04/raspberry-pi-bluetooth-wireless-speaker/
 
 
