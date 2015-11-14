@@ -1,0 +1,10 @@
+pcm.soundbar {
+	type bluetooth
+	device xx:xx:xx:xx:xx:xx
+	profile "auto"
+}
+
+pcm.speaker {
+	type hw
+	card 0
+}

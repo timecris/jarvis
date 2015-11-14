@@ -1,0 +1,36 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides: transparentproxy
+# Required-Start:    $local_fs $syslog $remote_fs dbus
+# Required-Stop:     $local_fs $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start transparentproxy
+### END INIT INFO
+
+case "$1" in
+  start|"")
+	cd /root/git/jarvis; 
+	/usr/bin/irw > /root/ir &
+	./network.sh &
+	./jjak.sh &
+	./jarvis.sh &
+	./button.sh &
+	./ir.sh &
+	;;
+  stop)
+	killall -9 jarvis.sh
+	killall -9 jjak.sh
+	killall -9 network.sh
+	killall -9 button.sh
+	killall -9 ir.sh
+	killall -9 mplayer
+	killall -9 mpg123
+	;;
+  status)
+	;;
+  *)
+	echo "Usage: jarvis [start|stop]" >&2
+	exit 3
+	;;
+esac
