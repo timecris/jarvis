@@ -11,7 +11,7 @@ function SpeechToText()
 	arecord -D plughw:0,0 -f cd -t wav -d 5 -r 16000 /tmp/out.wav 
 	flac -f --best --sample-rate 16000 -o /tmp/out.flac /tmp/out.wav
 	
-	ret=("$(wget -O - -o /dev/null --post-file /tmp/out.flac --header="Content-Type: audio/x-flac; rate=16000" "http://www.google.com/speech-api/v2/recognize?lang=en-US&key=AIzaSyAe7fGX5otBNDK1krub_WvOj3Of7AFxJ4I&output=json")")
+	ret=("$(wget -O - -o /dev/null --post-file /tmp/out.flac --header="Content-Type: audio/x-flac; rate=16000" "http://www.google.com/speech-api/v2/recognize?lang=en-US&key=$GOOGLE_KEY&output=json")")
 	text=("$(echo "$ret" | cut -f8 -d\")")
 	echo "$text"
 }

@@ -23,7 +23,10 @@ FILE_STATE=/tmp/state
 INTERVAL=5
 
 #OpenWeatherMap Key
-OWM_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OWM_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+#Google Speech Key
+GOOGLE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 MP3Player=mplayer
 #MP3Player=mpg123
