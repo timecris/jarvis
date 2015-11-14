@@ -25,6 +25,18 @@ INTERVAL=5
 #OpenWeatherMap Key
 OWM_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+MP3Player=mplayer
+#MP3Player=mpg123
+
+function PlayMp3()
+{
+	if [[ "$MP3Player" == "mpg123" ]]; then
+		mpg123 -a $1 sound/$2
+	elif [[ "$MP3Player" == "mplayer" ]]; then
+		mplayer -ao alsa:device=$1 sound/$2 
+	fi
+}
+
 function GetBtDevices()
 {
 	AUDIO_NAME=($(grep "pcm" ~/.asoundrc | awk -F "." '{print $2}' | awk -F " " '{print $1}'))

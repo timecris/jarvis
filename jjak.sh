@@ -40,12 +40,13 @@ function TextToSpeech()
 			print_args "JJAK" "Google API is not working."
 		else 
 			ranstr=($(GetRandomString))
-			/usr/bin/lame -V5 --vbr-new --resample 48 /tmp/out.mp3 sound/$ranstr.mp3
+			#/usr/bin/lame -V5 --vbr-new --resample 48 /tmp/out.mp3 sound/$ranstr.mp3
+			cp /tmp/out.mp3 sound/$ranstr.mp3
 			echo "$ranstr.mp3|$STRING" >> conf/sound.conf
-			mpg123 -a speaker sound/$ranstr.mp3
+			PlayMp3 "speaker" "$ranstr.mp3"	
 		fi
 	else
-		mpg123 -a speaker sound/$file
+		PlayMp3 "speaker" "$file"	
 	fi
 }
 

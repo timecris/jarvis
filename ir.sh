@@ -10,14 +10,14 @@ function Handler_IR()
 
         case $IR_CMD in
 	KEY_X)
-		if [ "$IR_DEV" == "rpi" ]; then
+		if [[ "$IR_DEV" =~ "jarvis" ]]; then
 			ShutUp
                 	SetBlock "STATE"
 			Talk_To_Jarvis "BTN_CLICK" "1"
 		fi	
 		;;
 	KEY_Y)
-		if [ "$IR_DEV" == "rpi" ]; then
+		if [[ "$IR_DEV" =~ "jarvis" ]]; then
 			ShutUp
                 	SetBlock "STATE"
 			Talk_To_Jarvis "BTN_CLICK" "2"
